@@ -106,7 +106,7 @@ public class SAMLDecryptAssertion implements Execution {
 			String encAssertion = messageContext.getMessage().getContent();
 			//TODO: get the private key from the vault
 			String privateKeyFile = "/resources/pkcs8.key";
-			String publicKeyFile = "/resources/sei_public.pem";//using a default certificate
+			String publicKeyFile = "/resources/public.pem";//using a default certificate
 			
 			SAML2Assertion saml = new SAML2Assertion();
 			
