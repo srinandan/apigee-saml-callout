@@ -1,14 +1,20 @@
 package com.apigee.callout;
 
+import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.opensaml.saml2.core.Assertion;
 import org.opensaml.xml.validation.ValidationException;
+import org.w3c.dom.Element;
 
 import com.apigee.flow.execution.ExecutionContext;
 import com.apigee.flow.execution.ExecutionResult;
@@ -49,7 +55,7 @@ public class SAMLDecryptAssertion implements Execution {
     private String[] getAudience(MessageContext msgCtxt) throws Exception {
         String audience = (String) this.properties.get("audience");
         if (audience == null || audience.equals("")) {
-        	throw new IllegalStateException("audience is not specified or is empty.");
+        	return null;
         }
 
         String[] audiences = StringUtils.split(audience,",");
@@ -58,7 +64,18 @@ public class SAMLDecryptAssertion implements Execution {
         }
 
         return audiences;
-    }    
+    }
+    
+    private String getPublicCert(MessageContext msgCtxt) throws Exception {
+        String publicCert = (String) this.properties.get("publiccert");
+        if (publicCert == null || publicCert.equals("")) {
+            // don't care. 
+            return null;
+        }
+        publicCert = resolvePropertyValue(publicCert, msgCtxt);
+        if (publicCert == null || publicCert.equals("")) { return null; }
+        return publicCert;    	
+    }
     
     // If the value of a property value begins and ends with curlies,
     // eg, {apiproxy.name}, then "resolve" the value by de-referencing
@@ -87,26 +104,36 @@ public class SAMLDecryptAssertion implements Execution {
 			String[] AUDIENCE = getAudience(messageContext);
 			
 			String encAssertion = messageContext.getMessage().getContent();
+			//TODO: get the private key from the vault
 			String privateKeyFile = "/resources/pkcs8.key";
-			String publicKeyFile = "/resources/public.pem";
+			String publicKeyFile = "/resources/sei_public.pem";//using a default certificate
 			
 			SAML2Assertion saml = new SAML2Assertion();
-						
+			
 			Assertion decryptedAssertion = saml.decrypt(encAssertion, privateKeyFile);
-			
-			//TODO:validate issuer and audience
-			
+			//TODO:validate audience
+
 			if (!saml.verifyAssertion(decryptedAssertion, publicKeyFile)) {
-				throw new ValidationException("signature not valid!");
+				throw new ValidationException("assertion is not valid!");
 			}
 			
 			Map<String, String> samlAttributes = saml.getSAMLProperties(decryptedAssertion);
-
+			
+			if(!samlAttributes.get("Issuer").equalsIgnoreCase(ISSUER)) {
+				throw new ValidationException("Invalid issuer in the Assertion/Response");
+			}
+			
 			for (Map.Entry<String, String> entry : samlAttributes.entrySet()) {
 				String key = entry.getKey();
 				String providedValue = entry.getValue();
 				messageContext.setVariable("saml_" + key, providedValue);
 			}
+			
+			//store the decrypted assertion in the response
+			Element plaintxt = saml.getPlainElement(decryptedAssertion);
+			StringWriter writer = new StringWriter();
+			TransformerFactory.newInstance().newTransformer().transform(new DOMSource(plaintxt), new StreamResult(writer));
+			messageContext.setVariable("request.content", writer.toString());
 			
 			return ExecutionResult.SUCCESS;
 		} catch (Throwable e) {
@@ -116,5 +143,4 @@ public class SAMLDecryptAssertion implements Execution {
 			return ExecutionResult.ABORT;
 		}
 	}
-
 }
