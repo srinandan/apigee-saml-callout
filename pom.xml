@@ -6,7 +6,7 @@
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <url>http://maven.apache.org</url>
-  <name>saml-example</name>
+  <name>saml-callout</name>
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -159,6 +159,11 @@
 	    <groupId>org.apache.commons</groupId>
 	    <artifactId>commons-io</artifactId>
 	    <version>1.3.2</version>
-	</dependency>    
+	</dependency>  
+	<dependency>
+	    <groupId>commons-codec</groupId>
+	    <artifactId>commons-codec</artifactId>
+	    <version>1.10</version>
+	</dependency>
   </dependencies>
 </project>

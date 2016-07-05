@@ -77,6 +77,18 @@ public class SAMLDecryptAssertion implements Execution {
         return publicCert;    	
     }
     
+    private String getPrivateKey(MessageContext msgCtxt) throws Exception {
+        String privateKey = (String) this.properties.get("privatekey.content");
+        if (privateKey == null || privateKey.equals("")) {
+            // don't care. 
+            return null;
+        }
+        privateKey = resolvePropertyValue(privateKey, msgCtxt);
+        if (privateKey == null || privateKey.equals("")) { return null; }
+        return privateKey;    	
+    }
+    
+    
     // If the value of a property value begins and ends with curlies,
     // eg, {apiproxy.name}, then "resolve" the value by de-referencing
     // the context variable whose name appears between the curlies.
@@ -102,15 +114,23 @@ public class SAMLDecryptAssertion implements Execution {
 		try {
 			String ISSUER = getIssuer(messageContext);
 			String[] AUDIENCE = getAudience(messageContext);
+			String encodedPrivateKey = getPrivateKey(messageContext);
 			
 			String encAssertion = messageContext.getMessage().getContent();
 			//TODO: get the private key from the vault
-			String privateKeyFile = "/resources/pkcs8.key";
+			String privateKeyFile = "/resources/pkcs8.key";//use a default key
 			String publicKeyFile = "/resources/public.pem";//using a default certificate
 			
 			SAML2Assertion saml = new SAML2Assertion();
 			
-			Assertion decryptedAssertion = saml.decrypt(encAssertion, privateKeyFile);
+			Assertion decryptedAssertion = null; 
+			
+			if (encodedPrivateKey != null) {
+				decryptedAssertion = saml.decrypt(encAssertion, encodedPrivateKey.getBytes());
+			} else {
+				decryptedAssertion = saml.decrypt(encAssertion, privateKeyFile);
+			}
+			
 			//TODO:validate audience
 
 			if (!saml.verifyAssertion(decryptedAssertion, publicKeyFile)) {
@@ -134,7 +154,7 @@ public class SAMLDecryptAssertion implements Execution {
 			StringWriter writer = new StringWriter();
 			TransformerFactory.newInstance().newTransformer().transform(new DOMSource(plaintxt), new StreamResult(writer));
 			messageContext.setVariable("request.content", writer.toString());
-			
+			messageContext.getMessage().setHeader("Content-Type", "application/xml");
 			return ExecutionResult.SUCCESS;
 		} catch (Throwable e) {
 			e.printStackTrace();
