@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Javascript async="false" continueOnError="false" enabled="true" timeLimit="200" name="Get-Assertion">
+    <DisplayName>Get Assertion</DisplayName>
+    <Properties>
+        <Property name="clientid">olaAIEfvVOZsy7QOUc8R7rYJ3CYGJ2wy</Property>
+        <Property name="clientsecret">g0SKSs3D7wB9m6cs</Property>
+    </Properties>
+    <IncludeURL>jsc://Base64.js</IncludeURL>
+    <ResourceURL>jsc://get-assertion.js</ResourceURL>
+</Javascript>

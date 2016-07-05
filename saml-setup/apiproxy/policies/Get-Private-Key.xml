@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ServiceCallout async="false" continueOnError="false" enabled="true" name="Get-Private-Key">
+    <DisplayName>Get Private Key</DisplayName>
+    <Properties/>
+    <Request clearPayload="true">
+        <Set>
+            <Headers>
+                <Header name="Accept">text/plain</Header>
+                <Header name="Content-Type">text/plain</Header>
+            </Headers>
+            <Path>/privatekeys/key1</Path>
+            <Verb>GET</Verb>
+        </Set>
+    </Request>
+    <Response>privatekeyResponse</Response>
+    <HTTPTargetConnection>
+        <URL>http://174.129.47.34:9001</URL>
+    </HTTPTargetConnection>
+</ServiceCallout>

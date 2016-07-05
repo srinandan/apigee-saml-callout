@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APIProxy revision="1" name="SAMLTest">
+    <ConfigurationVersion majorVersion="4" minorVersion="0"/>
+    <CreatedAt>1467594078283</CreatedAt>
+    <CreatedBy>opdk@apigee.com</CreatedBy>
+    <Description></Description>
+    <DisplayName>SAMLTest</DisplayName>
+    <LastModifiedAt>1467604089689</LastModifiedAt>
+    <LastModifiedBy>opdk@apigee.com</LastModifiedBy>
+    <Policies>
+        <Policy>Assign-Message-1</Policy>
+        <Policy>Get-Assertion</Policy>
+        <Policy>Get-Private-Key</Policy>
+        <Policy>OAuth-v20-1</Policy>
+        <Policy>SAML-Test</Policy>
+        <Policy>Validate-SAML-Assertion-1</Policy>
+    </Policies>
+    <ProxyEndpoints>
+        <ProxyEndpoint>default</ProxyEndpoint>
+    </ProxyEndpoints>
+    <Resources>
+        <Resource>java://saml.callout-1.0-SNAPSHOT.jar</Resource>
+        <Resource>jsc://Base64.js</Resource>
+        <Resource>jsc://get-assertion.js</Resource>
+    </Resources>
+    <TargetServers/>
+    <TargetEndpoints/>
+    <validate>false</validate>
+</APIProxy>

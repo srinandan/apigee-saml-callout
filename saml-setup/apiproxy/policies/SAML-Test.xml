@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<JavaCallout async="false" continueOnError="false" enabled="false" name="SAML-Test">
+    <DisplayName>SAML Test</DisplayName>
+    <Properties>
+        <Property name="issuer">https://test.apigee.com</Property>
+        <Property name="audience">https://apigee.seic.com/</Property>
+        <Property name="privatekey">{privatekeyResponse}</Property>
+    </Properties>
+    <ClassName>com.apigee.callout.SAMLDecryptAssertion</ClassName>
+    <ResourceURL>java://saml.callout-1.0-SNAPSHOT.jar</ResourceURL>
+</JavaCallout>
