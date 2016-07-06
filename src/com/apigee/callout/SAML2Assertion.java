@@ -151,13 +151,14 @@ public class SAML2Assertion {
 	}
 
 	public static void main(String[] args) throws Exception {
-		String privateKeyFile = "/resources/pkcs8.key";
+		String privateKeyFile = "/resources/sei_pkcs8.key";
 		String publicKeyFile = "/resources/public.pem";
 		//String publicKeyFile = "/resources/sei_public.pem";
 
 		SAML2Assertion saml = new SAML2Assertion();
 
 		System.out.println(saml.getBase64PrivateKey(privateKeyFile));
+		if (true) return;
 		BasicX509Credential publicKey = saml.getPublicKey(publicKeyFile);
 		BasicX509Credential privateKey = saml.getCredentials(privateKeyFile);
 		Certificate certificate = saml.getCertificate(publicKeyFile);
