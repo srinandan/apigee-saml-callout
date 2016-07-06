@@ -1,9 +1,9 @@
 # apigee-saml-callout
 This Java callout  can:
-1) Encrypt SAML Assertions 
-2) Decrypt SAML Assertions
-3) Validates SAML Assertion attributes (Issuer, Entity, etc.)
-4) Populates custom SAML attributes as Apigee variables for access in subsequent policies
+* Encrypt SAML Assertions 
+* Decrypt SAML Assertions
+* Validates SAML Assertion attributes (Issuer, Entity, etc.)
+* Populates custom SAML attributes as Apigee variables for access in subsequent policies
 
 ## Package
 ```
@@ -21,8 +21,11 @@ a byte[], then Base64 encode it and store in Apigee's vault (which itself is enc
 
 There is a second proxy implemented (node.js proxy) that reads from the vault. The basePath for this proxy is:
 ```
-https://{router-ip}/privatekeys/{keyname}
+https://{proxy-ip:port}/privatekeys/{keyname}
 ``` 
+Where:
+`{keyname}` is a vault entry name.
+
 The response is text/plain
 
 ####Attributes
